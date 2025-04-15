@@ -1,0 +1,6 @@
+descripción-del-dataset
+estructura-de-los-datos
+objetivo
+justificación
+conclusión
+fuentes

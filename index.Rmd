@@ -1,0 +1,221 @@
+--- 
+title: 'Análisis Series de Tiempo: Precio del Oro'
+author: "Nicolás Méndez Gutiérrez - Christian Martinez"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: book.bib
+description: |
+  This is a minimal example of using the bookdown package to write a book.
+  set in the _output.yml file.
+  The HTML output format for this example is bookdown::gitbook,
+link-citations: true
+github-repo: "rstudio/bookdown-demo"
+---
+
+```{r 0, include=FALSE}
+knitr::opts_chunk$set(
+  echo = FALSE,
+  message = FALSE,
+  warning = NA,
+  comment = NA)
+```
+
+# Descripción del dataset
+Este conjunto de datos contiene registros históricos del precio del oro desde el 31 de diciembre de 2013 hasta el 5 de noviembre de 2024, extraídos del mercado MCX. Se trata de un dataset útil para el análisis de series temporales y la predicción de tendencias del precio del oro.
+
+## Estructura de los datos
+El dataset incluye 2806 entradas y múltiples columnas con información clave:
+
+- Date: Fecha de transacción.
+- Open: Precio de apertura del mercado
+- High: Precio más alto alcanzado en el día
+- Low: Precio más bajo alcanzado en el día
+- Price: Precio de cierre del día
+- Volume: Cantidad de transacciones realizadas
+- Chg%: Variación porcentual del precio respecto al día anterior.
+
+# Objetivo
+Con este dataset se busca analizar el comportamiento histórico de los precios del oro con el objetivo de identificar tendencias significativas a lo largo del tiempo. Además, permite aplicar modelos estadísticos y de aprendizaje automático para predecir movimientos futuros del mercado, proporcionando herramientas útiles para comprender las dinámicas de este activo financiero y apoyar la toma de decisiones en contextos económicos y de inversión.
+
+# Justificación
+El dataset de precios diarios del oro es altamente adecuado para la aplicación de técnicas de análisis de series de tiempo debido a las siguientes características:
+
+1. Datos de tiempo ordenados
+
+- La variable Date proporciona una secuencia cronológica continua sin valores faltantes, lo que facilita la modelación de tendencias y patrones temporales.
+- La periodicidad diaria permite estudiar el comportamiento del mercado con alta resolución temporal.
+
+2. Evolución de variable dependiente
+
+- La columna Price representa el precio de cierre, una métrica clave para analizar la evolución del valor del oro a lo largo del tiempo.
+- Al ser una serie numérica con cambios graduales y picos específicos, es ideal para aplicar modelos predictivos como ARIMA, modelos de suavizamiento exponencial y redes neuronales recurrentes.
+
+3. Factores Exógenos y Multivariabilidad
+
+- Las variables Open, High, Low y Volume permiten estudiar la influencia de distintos factores sobre la variación del precio, enriqueciendo el análisis.
+- La columna Chg% proporciona información sobre volatilidad y puede usarse para identificar momentos de alta inestabilidad en el mercado.
+
+4. Aplicabilidad Real y Relevancia Económica
+
+- El oro es un activo financiero de gran importancia en la economía global, por lo que analizar sus precios a lo largo del tiempo tiene aplicaciones prácticas en predicción de tendencias, evaluación de riesgos y toma de decisiones de inversión.
+- Permite la identificación de patrones estacionales, ciclos de mercado y efectos de eventos económicos en la fluctuación del precio.
+
+5. Calidad de los datos
+
+- Con 2806 registros sin valores faltantes, el dataset proporciona información confiable para entrenar modelos sin la necesidad de una limpieza exhaustiva.
+- La estabilidad en la estructura del dataset facilita la aplicación de metodologías estadísticas y de machine learning.
+
+En conclusión este dataset es ideal para estudios de series de tiempo, ya que permite aplicar modelos predictivos, evaluar la influencia de factores exógenos y analizar tendencias económicas con datos sólidos y completos.
+
+# Análisis Exploratorio de Datos
+
+Se importa el dataset cuyos primeros registros se muestran a continuación.
+
+```{r 1}
+library(tidyverse)
+library(lubridate)
+library(skimr)
+library(ggplot2)
+library(forecast)
+library(TTR)
+library(zoo)
+datos <- read_csv("Gold Price.csv")
+head(datos)
+```
+
+A continuación se presenta un resumen de medidas descriptivas.
+
+```{r 2}
+skim(datos)  # Resumen detallado
+```
+
+Se explora la existencia de datos faltantes.
+
+```{r 3}
+# Convertir fecha
+datos <- datos %>%
+  mutate(Date = as.Date(Date))
+
+# Verificar valores faltantes
+colSums(is.na(datos))
+```
+
+Se realizan gráficos para observar tendencias a lo largo del tiempo de:
+
+- El precio
+```{r 4}
+# Precio a lo largo del tiempo
+ggplot(datos, aes(x = Date, y = Price)) +
+  geom_line() +
+  labs(title = "Evolución del Precio del Oro",
+       x = "Fecha",
+       y = "Precio") +
+  theme_minimal()
+```
+
+- Cambios porcentuales
+```{r 5}
+# Cambios porcentuales
+ggplot(datos, aes(x = Date, y = `Chg%`)) +
+  geom_col(fill = "steelblue") +
+  labs(title = "Cambio Porcentual Diario",
+       x = "Fecha",
+       y = "Cambio (%)") +
+  theme_minimal()
+```
+
+- Comparación del valor máximo vs mínimos del día
+```{r 6}
+# Comparación de High vs Low
+ggplot(datos, aes(x = Date)) +
+  geom_line(aes(y = High), color = "red") +
+  geom_line(aes(y = Low), color = "blue") +
+  labs(title = "Precios Máximos y Mínimos",
+       x = "Fecha",
+       y = "Precio") +
+  theme_minimal()
+```
+
+## Análisis de promedio movil, rezagos y estacionalidad
+
+```{r 7}
+# Procesamiento inicial
+datos <- datos %>%
+  mutate(Date = as.Date(Date)) %>%
+  arrange(Date)  #Ordenar por fecha
+```
+
+### Promedio móvil
+
+Se agrega un promedio móvil de 7 días, es decir, de manera semanal ya que muchos mercados (como el oro, acciones, productos básicos) tienden a mostrar variaciones semanales 
+(por factores como fin de semana, cierres de mercado, ciclos de noticias, etc.)
+
+```{r 8}
+datos <- datos %>%
+  mutate(moving_avg_7 = SMA(Price, n = 7))
+
+# Visualización
+ggplot(datos, aes(x = Date)) +
+  geom_line(aes(y = Price), color = "gray") +
+  geom_line(aes(y = moving_avg_7), color = "blue", size = 1) +
+  labs(title = "Precio del Oro con Promedio Móvil de 7 días",
+       x = "Fecha",
+       y = "Precio") +
+  theme_minimal()
+```
+
+Se hacen las siguientes observaciones:
+
+* La serie muestra una tendencia creciente de largo plazo, especialmente desde 2019 en adelante.
+* 2013 - 2018: El precio del oro estuvo relativamente estable o ligeramente a la baja, con pequeñas fluctuaciones.
+* 2019 - 2020: Se observa un fuerte crecimiento, con un aumento pronunciado en el precio.
+* 2020 - 2021: Hay una corrección o caída parcial, después de un máximo.
+* 2021 - 2025: Retoma una tendencia alcista constante con algunos ciclos de subida y bajada.
+* Se identifican momentos donde la curva cambia de pendiente (subidas abruptas o correcciones), que pueden estar asociadas a eventos macroeconómicos.
+
+### Rezagos (lags)
+```{r 9}
+# Creamos una variable de rezago de 1 día
+datos <- datos %>%
+  mutate(lag_1 = lag(Price, 1))
+
+# Graficamos relación entre Price y su rezago
+ggplot(datos, aes(x = lag_1, y = Price)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  labs(title = "Relación entre Precio y su Rezago de 1 Día",
+       x = "Precio Rezagado (1 día)",
+       y = "Precio Actual") +
+  theme_minimal()
+```
+
+Se realizan las siguientes observaciones:
+
+* El precio del oro no cambia drásticamente de un día para otro; más bien tiende a seguir la misma trayectoria.
+* Hay baja volatilidad diaria relativa (aunque a largo plazo se observaron tendencias importantes).
+
+### Estacionalidad
+```{r 10}
+# Convertimos a serie de tiempo
+serie_ts <- ts(datos$Price, frequency = 365)
+
+# Descomponemos la serie
+descomposicion <- stl(na.approx(serie_ts), s.window = "periodic")
+
+# Gráfico de descomposición
+plot(descomposicion, main = "Descomposición de la Serie Temporal del Precio del Oro")
+```
+
+* En la primera porción de la gráfica, se observa el comportamiento de la variable precio a lo largo del tiempo.
+* La segunda porción, Seasonal, muestra cómo varía sistemáticamente a lo largo del año.
+* La tercera porción, muestra la Tendencia a largo plazo.
+* Finalmente, se observa en la porción de Remainder el ruido no se explicado por la estacionalidad.
+
+De la gráfica, se realizan las siguientes observaciones:
+
+* Se aprecia claramente la tendencia creciente fuerte, especialmente desde el año 2020 en adelante.
+* El componente estacional muestra ciclos repetitivos con una frecuencia regular de picos y valles aproximadamente cada año. La amplitud del patrón estacional es pequeña en comparación al nivel del precio.
+
+# Fuentes
+* Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series

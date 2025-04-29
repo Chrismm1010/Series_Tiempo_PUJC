@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Análisis Series de Tiempo: Precio del Oro</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Análisis Series de Tiempo: Precio del Oro" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Análisis Series de Tiempo: Precio del Oro" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  
+
+<meta name="author" content="Nicolás Méndez Gutiérrez - Christian Martinez" />
+
+
+<meta name="date" content="2025-04-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="objetivo.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Análisis Series de Tiempo: Precio del Oro</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="#descripci%C3%B3n-del-dataset"><i class="fa fa-check"></i><b>1</b> Descripción del dataset</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1.1</b> Estructura de los datos</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objetivo.html"><a href="objetivo.html"><i class="fa fa-check"></i><b>2</b> Objetivo</a></li>
+<li class="chapter" data-level="3" data-path="index.html"><a href="#justificaci%C3%B3n"><i class="fa fa-check"></i><b>3</b> Justificación</a></li>
+<li class="chapter" data-level="4" data-path="index.html"><a href="#an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>4</b> Análisis Exploratorio de Datos</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="index.html"><a href="#an%C3%A1lisis-de-promedio-movil-rezagos-y-estacionalidad"><i class="fa fa-check"></i><b>4.1</b> Análisis de promedio movil, rezagos y estacionalidad</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="index.html"><a href="#promedio-m%C3%B3vil"><i class="fa fa-check"></i><b>4.1.1</b> Promedio móvil</a></li>
+<li class="chapter" data-level="4.1.2" data-path="análisis-exploratorio-de-datos.html"><a href="análisis-exploratorio-de-datos.html"><i class="fa fa-check"></i><b>4.1.2</b> Rezagos (lags)</a></li>
+<li class="chapter" data-level="4.1.3" data-path="análisis-exploratorio-de-datos.html"><a href="análisis-exploratorio-de-datos.html#estacionalidad"><i class="fa fa-check"></i><b>4.1.3</b> Estacionalidad</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="fuentes.html"><a href="fuentes.html"><i class="fa fa-check"></i><b>5</b> Fuentes</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Análisis Series de Tiempo: Precio del Oro</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Análisis Series de Tiempo: Precio del Oro</h1>
+<p class="author"><em>Nicolás Méndez Gutiérrez - Christian Martinez</em></p>
+<p class="date"><em>2025-04-28</em></p>
+</div>
+<div id="descripción-del-dataset" class="section level1 hasAnchor" number="1">
+<h1><span class="header-section-number">Chapter 1</span> Descripción del dataset<a href="#descripci%C3%B3n-del-dataset" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Este conjunto de datos contiene registros históricos del precio del oro desde el 31 de diciembre de 2013 hasta el 5 de noviembre de 2024, extraídos del mercado MCX. Se trata de un dataset útil para el análisis de series temporales y la predicción de tendencias del precio del oro.</p>
+<div id="estructura-de-los-datos" class="section level2 hasAnchor" number="1.1">
+<h2><span class="header-section-number">1.1</span> Estructura de los datos<a href="index.html#estructura-de-los-datos" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>El dataset incluye 2806 entradas y múltiples columnas con información clave:</p>
+<ul>
+<li>Date: Fecha de transacción.</li>
+<li>Open: Precio de apertura del mercado</li>
+<li>High: Precio más alto alcanzado en el día</li>
+<li>Low: Precio más bajo alcanzado en el día</li>
+<li>Price: Precio de cierre del día</li>
+<li>Volume: Cantidad de transacciones realizadas</li>
+<li>Chg%: Variación porcentual del precio respecto al día anterior.</li>
+</ul>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="objetivo.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Chapter 4 Análisis Exploratorio de Datos | Análisis Series de Tiempo: Precio del Oro</title>
+  <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Chapter 4 Análisis Exploratorio de Datos | Análisis Series de Tiempo: Precio del Oro" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  <meta name="github-repo" content="rstudio/bookdown-demo" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Chapter 4 Análisis Exploratorio de Datos | Análisis Series de Tiempo: Precio del Oro" />
+  
+  <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
+set in the _output.yml file.
+The HTML output format for this example is bookdown::gitbook,</p>" />
+  
+
+<meta name="author" content="Nicolás Méndez Gutiérrez - Christian Martinez" />
+
+
+<meta name="date" content="2025-04-28" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="justificación.html"/>
+<link rel="next" href="fuentes.html"/>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+
+
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">Análisis Series de Tiempo: Precio del Oro</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="#descripci%C3%B3n-del-dataset"><i class="fa fa-check"></i><b>1</b> Descripción del dataset</a>
+<ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1.1</b> Estructura de los datos</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="objetivo.html"><a href="objetivo.html"><i class="fa fa-check"></i><b>2</b> Objetivo</a></li>
+<li class="chapter" data-level="3" data-path="index.html"><a href="#justificaci%C3%B3n"><i class="fa fa-check"></i><b>3</b> Justificación</a></li>
+<li class="chapter" data-level="4" data-path="index.html"><a href="#an%C3%A1lisis-exploratorio-de-datos"><i class="fa fa-check"></i><b>4</b> Análisis Exploratorio de Datos</a>
+<ul>
+<li class="chapter" data-level="4.1" data-path="index.html"><a href="#an%C3%A1lisis-de-promedio-movil-rezagos-y-estacionalidad"><i class="fa fa-check"></i><b>4.1</b> Análisis de promedio movil, rezagos y estacionalidad</a>
+<ul>
+<li class="chapter" data-level="4.1.1" data-path="index.html"><a href="#promedio-m%C3%B3vil"><i class="fa fa-check"></i><b>4.1.1</b> Promedio móvil</a></li>
+<li class="chapter" data-level="4.1.2" data-path="análisis-exploratorio-de-datos.html"><a href="análisis-exploratorio-de-datos.html"><i class="fa fa-check"></i><b>4.1.2</b> Rezagos (lags)</a></li>
+<li class="chapter" data-level="4.1.3" data-path="análisis-exploratorio-de-datos.html"><a href="análisis-exploratorio-de-datos.html#estacionalidad"><i class="fa fa-check"></i><b>4.1.3</b> Estacionalidad</a></li>
+</ul></li>
+</ul></li>
+<li class="chapter" data-level="5" data-path="fuentes.html"><a href="fuentes.html"><i class="fa fa-check"></i><b>5</b> Fuentes</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rstudio/bookdown" target="blank">Published with bookdown</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Análisis Series de Tiempo: Precio del Oro</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="análisis-exploratorio-de-datos" class="section level1 hasAnchor" number="4">
+<h1><span class="header-section-number">Chapter 4</span> Análisis Exploratorio de Datos<a href="#an%C3%A1lisis-exploratorio-de-datos" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>Se importa el dataset cuyos primeros registros se muestran a continuación.</p>
+<pre><code># A tibble: 6 × 7
+  Date       Price  Open  High   Low Volume `Chg%`
+  &lt;date&gt;     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 2024-11-06 77030 78300 78570 77030      0  -1.86
+2 2024-11-05 78490 78224 78670 78160      0   0.11
+3 2024-11-04 78401 78498 78642 78237      0  -0.54
+4 2024-11-01 78829 78650 78887 78550      0   0.64
+5 2024-10-31 78326 79264 79999 77803     90  -1.17
+6 2024-10-30 79257 79119 79375 78888    130   0.5 </code></pre>
+<p>A continuación se presenta un resumen de medidas descriptivas.</p>
+<table>
+<caption><span id="tab:2">Table 4.1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">datos</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">2806</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">7</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">Date</td>
+<td align="left">1</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">6</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: Date</strong></p>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="12%" />
+<col width="17%" />
+<col width="13%" />
+<col width="13%" />
+<col width="13%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="left">min</th>
+<th align="left">max</th>
+<th align="left">median</th>
+<th align="right">n_unique</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Date</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">2014-01-01</td>
+<td align="left">2024-11-06</td>
+<td align="left">2019-05-27</td>
+<td align="right">2806</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="13%" />
+<col width="9%" />
+<col width="13%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="5%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Price</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40699.89</td>
+<td align="right">13828.62</td>
+<td align="right">24545.00</td>
+<td align="right">29128.00</td>
+<td align="right">32980.00</td>
+<td align="right">50613.50</td>
+<td align="right">79257.0</td>
+<td align="left">▇▂▃▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">Open</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40700.22</td>
+<td align="right">13826.94</td>
+<td align="right">24583.00</td>
+<td align="right">29103.75</td>
+<td align="right">33000.00</td>
+<td align="right">50646.75</td>
+<td align="right">79264.0</td>
+<td align="left">▇▂▃▂▁</td>
+</tr>
+<tr class="odd">
+<td align="left">High</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40917.78</td>
+<td align="right">13900.47</td>
+<td align="right">24635.00</td>
+<td align="right">29261.25</td>
+<td align="right">33220.50</td>
+<td align="right">50911.25</td>
+<td align="right">79999.0</td>
+<td align="left">▇▂▃▂▁</td>
+</tr>
+<tr class="even">
+<td align="left">Low</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">40482.31</td>
+<td align="right">13756.09</td>
+<td align="right">24470.00</td>
+<td align="right">28974.00</td>
+<td align="right">32890.00</td>
+<td align="right">50337.50</td>
+<td align="right">78888.0</td>
+<td align="left">▇▂▃▂▁</td>
+</tr>
+<tr class="odd">
+<td align="left">Volume</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">12529.58</td>
+<td align="right">10649.99</td>
+<td align="right">0.00</td>
+<td align="right">6282.50</td>
+<td align="right">10770.00</td>
+<td align="right">16397.50</td>
+<td align="right">106920.0</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">Chg%</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">0.04</td>
+<td align="right">0.83</td>
+<td align="right">-5.98</td>
+<td align="right">-0.38</td>
+<td align="right">0.04</td>
+<td align="right">0.45</td>
+<td align="right">5.3</td>
+<td align="left">▁▁▇▁▁</td>
+</tr>
+</tbody>
+</table>
+<p>Se explora la existencia de datos faltantes.</p>
+<pre><code>  Date  Price   Open   High    Low Volume   Chg% 
+     0      0      0      0      0      0      0 </code></pre>
+<p>Se realizan gráficos para observar tendencias a lo largo del tiempo de:</p>
+<ul>
+<li><p>El precio
+<img src="_main_files/figure-html/4-1.png" width="672" /></p></li>
+<li><p>Cambios porcentuales
+<img src="_main_files/figure-html/5-1.png" width="672" /></p></li>
+<li><p>Comparación del valor máximo vs mínimos del día
+<img src="_main_files/figure-html/6-1.png" width="672" /></p></li>
+</ul>
+<div id="análisis-de-promedio-movil-rezagos-y-estacionalidad" class="section level2 hasAnchor" number="4.1">
+<h2><span class="header-section-number">4.1</span> Análisis de promedio movil, rezagos y estacionalidad<a href="#an%C3%A1lisis-de-promedio-movil-rezagos-y-estacionalidad" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div id="promedio-móvil" class="section level3 hasAnchor" number="4.1.1">
+<h3><span class="header-section-number">4.1.1</span> Promedio móvil<a href="#promedio-m%C3%B3vil" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p>Se agrega un promedio móvil de 7 días, es decir, de manera semanal ya que muchos mercados (como el oro, acciones, productos básicos) tienden a mostrar variaciones semanales
+(por factores como fin de semana, cierres de mercado, ciclos de noticias, etc.)</p>
+<p><img src="_main_files/figure-html/8-1.png" width="672" /></p>
+<p>Se hacen las siguientes observaciones:</p>
+<ul>
+<li>La serie muestra una tendencia creciente de largo plazo, especialmente desde 2019 en adelante.</li>
+<li>2013 - 2018: El precio del oro estuvo relativamente estable o ligeramente a la baja, con pequeñas fluctuaciones.</li>
+<li>2019 - 2020: Se observa un fuerte crecimiento, con un aumento pronunciado en el precio.</li>
+<li>2020 - 2021: Hay una corrección o caída parcial, después de un máximo.</li>
+<li>2021 - 2025: Retoma una tendencia alcista constante con algunos ciclos de subida y bajada.</li>
+<li>Se identifican momentos donde la curva cambia de pendiente (subidas abruptas o correcciones), que pueden estar asociadas a eventos macroeconómicos.</li>
+</ul>
+</div>
+<div id="rezagos-lags" class="section level3 hasAnchor" number="4.1.2">
+<h3><span class="header-section-number">4.1.2</span> Rezagos (lags)<a href="análisis-exploratorio-de-datos.html#rezagos-lags" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><img src="_main_files/figure-html/9-1.png" width="672" /></p>
+<p>Se realizan las siguientes observaciones:</p>
+<ul>
+<li>El precio del oro no cambia drásticamente de un día para otro; más bien tiende a seguir la misma trayectoria.</li>
+<li>Hay baja volatilidad diaria relativa (aunque a largo plazo se observaron tendencias importantes).</li>
+</ul>
+</div>
+<div id="estacionalidad" class="section level3 hasAnchor" number="4.1.3">
+<h3><span class="header-section-number">4.1.3</span> Estacionalidad<a href="análisis-exploratorio-de-datos.html#estacionalidad" class="anchor-section" aria-label="Anchor link to header"></a></h3>
+<p><img src="_main_files/figure-html/10-1.png" width="672" /></p>
+<ul>
+<li>En la primera porción de la gráfica, se observa el comportamiento de la variable precio a lo largo del tiempo.</li>
+<li>La segunda porción, Seasonal, muestra cómo varía sistemáticamente a lo largo del año.</li>
+<li>La tercera porción, muestra la Tendencia a largo plazo.</li>
+<li>Finalmente, se observa en la porción de Remainder el ruido no se explicado por la estacionalidad.</li>
+</ul>
+<p>De la gráfica, se realizan las siguientes observaciones:</p>
+<ul>
+<li>Se aprecia claramente la tendencia creciente fuerte, especialmente desde el año 2020 en adelante.</li>
+<li>El componente estacional muestra ciclos repetitivos con una frecuencia regular de picos y valles aproximadamente cada año. La amplitud del patrón estacional es pequeña en comparación al nivel del precio.</li>
+</ul>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="justificación.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="fuentes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"whatsapp": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": "https://github.com/USERNAME/REPO/edit/BRANCH/index.Rmd",
+"text": "Edit"
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf", "_main.epub"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+</body>
+
+</html>

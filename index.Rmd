@@ -78,6 +78,7 @@ library(lubridate)
 library(skimr)
 library(ggplot2)
 library(forecast)
+library(tseries)
 library(TTR)
 library(zoo)
 datos <- read_csv("Gold Price.csv")
@@ -216,6 +217,69 @@ De la gráfica, se realizan las siguientes observaciones:
 
 * Se aprecia claramente la tendencia creciente fuerte, especialmente desde el año 2020 en adelante.
 * El componente estacional muestra ciclos repetitivos con una frecuencia regular de picos y valles aproximadamente cada año. La amplitud del patrón estacional es pequeña en comparación al nivel del precio.
+
+Se verifica la estacionalidad.
+```{r 11}
+adf_test <- adf.test(serie_ts, alternative = "stationary")
+print(adf_test)
+```
+* El ADF test evalúa la hipótesis nula de que una serie no es estacionaria (tiene raíz unitaria), frente a la hipótesis alternativa de que sí es estacionaria.
+* Con un p-valor tan alto (0.9002), la evidencia estadística indica que la serie ts_price:
+  * No tiene media ni varianza constante en el tiempo.
+  * Tiene una tendencia persistente, como ya se vio en la descomposición STL.
+  * No es apta para modelado directo con ARIMA u otras técnicas que requieren estacionariedad, a menos que se transforme.
+
+### Diferenciación de primer orden
+```{r 12}
+ts_diff1 <- diff(serie_ts)
+plot(ts_diff1, main = "Serie Diferenciada (1er Orden)", ylab = "Diferencia", col = "steelblue")
+```
+
+Prueba ADF tras la diferenciación:
+```{r 13}
+adf_diff <- adf.test(ts_diff1, alternative = "stationary")
+print(adf_diff)
+```
+
+* p-value = 0.01: Significa que podemos rechazar la hipótesis nula de no estacionariedad.
+* El estadístico Dickey-Fuller altamente negativo (-15.197) indica una fuerte evidencia de estacionariedad.
+
+### Transformación logarítmica + diferencia
+```{r 14}
+ts_log <- log(serie_ts) #Convierte la serie en una escala proporcional, útil cuando hay crecimiento exponencial o varianza creciente.
+ts_log_diff <- diff(ts_log) #Calcula los retornos logarítmicos diarios, lo cual es común en análisis financiero.
+plot(ts_log_diff, main = "Serie Logarítmica Diferenciada", ylab = "log(Precio) Δ", col = "darkgreen")
+```
+
+* La serie resultante oscila en torno a cero, lo cual indica estacionariedad en media.
+* No hay una tendencia visible: el promedio es constante.
+* La dispersión (volatilidad) se ve bastante estable a lo largo del tiempo → varianza constante, o al menos más homogénea que la serie original.
+* Hay algunos picos puntuales que pueden ser eventos de mercado extremos, pero no afectan la estructura general.
+* La serie logarítmica diferenciada cumple con los requisitos clave de una serie estacionaria: media constante, varianza relativamente constante y ausencia de tendencia.
+* Es altamente recomendable trabajar con esta serie transformada para fines de modelado, predicción o análisis estadístico.
+
+ADF para log-diff:
+```{r 15}
+adf_logdiff <- adf.test(ts_log_diff, alternative = "stationary")
+print(adf_logdiff)
+```
+* Se aplicó la transformación logarítmica y diferenciación de primer orden a la serie del precio del oro con el objetivo de controlar la tendencia creciente y la variabilidad no constante observadas en la serie original.
+* La prueba de Dickey-Fuller aumentada aplicada a la serie transformada (diff(log(Precio))) arrojó un estadístico de -14.322 y un p-valor inferior a 0.01, lo cual permite rechazar la hipótesis nula de no estacionariedad.
+* Por tanto, se concluye que la serie logarítmica diferenciada es estacionaria, lo cual justifica su uso en procesos de modelado como ARIMA, SARIMA o técnicas de pronóstico más avanzadas. Esta transformación también normaliza la escala de los cambios, permitiendo interpretar los resultados en términos de retornos porcentuales diarios.
+
+### Visualización comparativa
+```{r 16}
+par(mfrow = c(3, 1))
+plot(serie_ts, main = "Precio Original", ylab = "Precio")
+plot(ts_diff1, main = "Diferencia de Primer Orden", ylab = "Δ Precio")
+plot(ts_log_diff, main = "Log(Diferencia)", ylab = "Δ log(Precio)")
+par(mfrow = c(1, 1))
+```
+
+* La serie original del precio del oro presenta una tendencia creciente y varianza heterogénea, por lo que no cumple los requisitos de estacionariedad
+* La diferenciación de primer orden elimina la tendencia, estabilizando la media pero no completamente la varianza.
+* Al aplicar una transformación logarítmica seguida de una diferencia, se consigue una serie que oscila alrededor de cero y mantiene varianza aproximadamente constante.
+
 
 # Fuentes
 * Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series

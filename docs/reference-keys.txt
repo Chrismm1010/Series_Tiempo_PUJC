@@ -8,4 +8,7 @@ análisis-de-promedio-movil-rezagos-y-estacionalidad
 promedio-móvil
 rezagos-lags
 estacionalidad
+diferenciación-de-primer-orden
+transformación-logarítmica-diferencia
+visualización-comparativa
 fuentes

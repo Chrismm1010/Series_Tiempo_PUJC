@@ -79,7 +79,7 @@
 
 \title{Análisis Series de Tiempo: Precio del Oro}
 \author{Nicolás Méndez Gutiérrez - Christian Martinez}
-\date{2025-04-28}
+\date{2025-05-05}
 
 \begin{document}
 \maketitle
@@ -364,6 +364,113 @@ De la gráfica, se realizan las siguientes observaciones:
   Se aprecia claramente la tendencia creciente fuerte, especialmente desde el año 2020 en adelante.
 \item
   El componente estacional muestra ciclos repetitivos con una frecuencia regular de picos y valles aproximadamente cada año. La amplitud del patrón estacional es pequeña en comparación al nivel del precio.
+\end{itemize}
+
+Se verifica la estacionalidad.
+
+\begin{verbatim}
+
+    Augmented Dickey-Fuller Test
+
+data:  serie_ts
+Dickey-Fuller = -1.2393, Lag order = 14, p-value = 0.9002
+alternative hypothesis: stationary
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  El ADF test evalúa la hipótesis nula de que una serie no es estacionaria (tiene raíz unitaria), frente a la hipótesis alternativa de que sí es estacionaria.
+\item
+  Con un p-valor tan alto (0.9002), la evidencia estadística indica que la serie ts\_price:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    No tiene media ni varianza constante en el tiempo.
+  \item
+    Tiene una tendencia persistente, como ya se vio en la descomposición STL.
+  \item
+    No es apta para modelado directo con ARIMA u otras técnicas que requieren estacionariedad, a menos que se transforme.
+  \end{itemize}
+\end{itemize}
+
+\subsection{Diferenciación de primer orden}\label{diferenciaciuxf3n-de-primer-orden}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/12-1.pdf}}
+
+Prueba ADF tras la diferenciación:
+
+\begin{verbatim}
+
+    Augmented Dickey-Fuller Test
+
+data:  ts_diff1
+Dickey-Fuller = -15.197, Lag order = 14, p-value = 0.01
+alternative hypothesis: stationary
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  p-value = 0.01: Significa que podemos rechazar la hipótesis nula de no estacionariedad.
+\item
+  El estadístico Dickey-Fuller altamente negativo (-15.197) indica una fuerte evidencia de estacionariedad.
+\end{itemize}
+
+\subsection{Transformación logarítmica + diferencia}\label{transformaciuxf3n-logaruxedtmica-diferencia}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/14-1.pdf}}
+
+\begin{itemize}
+\tightlist
+\item
+  La serie resultante oscila en torno a cero, lo cual indica estacionariedad en media.
+\item
+  No hay una tendencia visible: el promedio es constante.
+\item
+  La dispersión (volatilidad) se ve bastante estable a lo largo del tiempo → varianza constante, o al menos más homogénea que la serie original.
+\item
+  Hay algunos picos puntuales que pueden ser eventos de mercado extremos, pero no afectan la estructura general.
+\item
+  La serie logarítmica diferenciada cumple con los requisitos clave de una serie estacionaria: media constante, varianza relativamente constante y ausencia de tendencia.
+\item
+  Es altamente recomendable trabajar con esta serie transformada para fines de modelado, predicción o análisis estadístico.
+\end{itemize}
+
+ADF para log-diff:
+
+\begin{verbatim}
+
+    Augmented Dickey-Fuller Test
+
+data:  ts_log_diff
+Dickey-Fuller = -14.322, Lag order = 14, p-value = 0.01
+alternative hypothesis: stationary
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Se aplicó la transformación logarítmica y diferenciación de primer orden a la serie del precio del oro con el objetivo de controlar la tendencia creciente y la variabilidad no constante observadas en la serie original.
+\item
+  La prueba de Dickey-Fuller aumentada aplicada a la serie transformada (diff(log(Precio))) arrojó un estadístico de -14.322 y un p-valor inferior a 0.01, lo cual permite rechazar la hipótesis nula de no estacionariedad.
+\item
+  Por tanto, se concluye que la serie logarítmica diferenciada es estacionaria, lo cual justifica su uso en procesos de modelado como ARIMA, SARIMA o técnicas de pronóstico más avanzadas. Esta transformación también normaliza la escala de los cambios, permitiendo interpretar los resultados en términos de retornos porcentuales diarios.
+\end{itemize}
+
+\subsection{Visualización comparativa}\label{visualizaciuxf3n-comparativa}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/16-1.pdf}}
+
+\begin{itemize}
+\tightlist
+\item
+  La serie original del precio del oro presenta una tendencia creciente y varianza heterogénea, por lo que no cumple los requisitos de estacionariedad
+\item
+  La diferenciación de primer orden elimina la tendencia, estabilizando la media pero no completamente la varianza.
+\item
+  Al aplicar una transformación logarítmica seguida de una diferencia, se consigue una serie que oscila alrededor de cero y mantiene varianza aproximadamente constante.
 \end{itemize}
 
 \chapter{Fuentes}\label{fuentes}

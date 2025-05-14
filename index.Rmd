@@ -280,6 +280,102 @@ par(mfrow = c(1, 1))
 * La diferenciación de primer orden elimina la tendencia, estabilizando la media pero no completamente la varianza.
 * Al aplicar una transformación logarítmica seguida de una diferencia, se consigue una serie que oscila alrededor de cero y mantiene varianza aproximadamente constante.
 
+# Pronóstico de Series de Tiempo
+
+## 1 Aplicar el modelo de Holt-Winters
+Dado que la estacionalidad parece mantenerse relativamente constante en magnitud, un modelo aditivo podría ser la mejor opción.
+```{r 17}
+# Ajustar el modelo Holt-Winters
+modelo_hw <- HoltWinters(ts_log_diff, seasonal = "additive")
+plot(modelo_hw, main = "Modelo Holt-Winters aplicado a la Serie Transformada")
+```
+
+## 2 Evaluar el ajuste del modelo
+
+```{r 18}
+# Visualizar los parámetros estimados
+print(modelo_hw)
+```
+
+* alpha = 0.0025:Indica que la serie da muy poca importancia a los valores recientes en el suavizamiento. Podría ser porque la serie ya está bastante estable después de la transformación.
+* beta = 0.0023:  La tendencia es muy baja, lo que indica que el modelo no detecta un crecimiento claro después de la diferenciación.
+* gamma = 0.3500 → La componente estacional tiene moderada importancia, lo que confirma que el precio del oro muestra fluctuaciones repetitivas
+
+## 3 Pronostico con Holt-Winters
+
+```{r 19}
+# Predicción para los próximos 30 días
+pred_hw <- predict(modelo_hw, n.ahead = 30, prediction.interval = TRUE)
+plot(modelo_hw, main = "Pronóstico Holt-Winters para los próximos días")
+lines(pred_hw[,1], col = "red", lwd = 2)
+```
+
+La línea roja indica el ajuste del modelo sobre la serie temporal. El modelo captura bastante bien la variabilidad
+
+## 4 Aplicación de suavizado exponencial simple
+
+```{r 20}
+modelo_ses <- ses(serie_ts)
+plot(fitted(modelo_ses), main = "Suavizamiento Exponencial Simple")
+```
+
+Este método da más peso a los valores recientes, lo que ayuda a capturar cambios sin reaccionar bruscamente a fluctuaciones
+aleatorias.
+El modelo Holt-Winters añade tendencia y estacionalidad, mientras que el suavizamiento exponencial simple solo suaviza la
+serie.
+
+## 5 Comparación de modelos
+
+Calcular el error del modelo Holt-Winters
+```{r 21}
+# Calcular el error del modelo Holt-Winters
+error_hw <- accuracy(fitted(modelo_hw), ts_log_diff)
+print(error_hw)
+```
+
+
+Calcular el error del Suavizamiento Exponencial Simple
+```{r 22}
+# Calcular el error del Suavizamiento Exponencial Simple
+error_ses <- accuracy(fitted(modelo_ses), serie_ts)
+print(error_ses)
+```
+
+```{r 23}
+# Comparación de los errores
+comparacion_errores <- data.frame(
+  Modelo = c("Holt-Winters", "Suavizamiento Exponencial Simple"),
+  MAE = c(error_hw[2], error_ses[2]),  # Error Absoluto Medio
+  RMSE = c(error_hw[3], error_ses[3])  # Raíz del Error Cuadrático Medio
+)
+
+print(comparacion_errores)
+```
+
+RMSE: 353.69 en modelo SAS, el modelo no ajusta bien la variabilidad de la serie.
+
+MAE: 237.07 También más alto en modelo SAS, indicando errores más grandes en la predicción.
+
+## 6 Conclusiones
+
+```{r 24}
+# Crear un data frame con las métricas de error
+errores <- data.frame(
+  Modelo = c("Holt-Winters", "Suavizamiento Exponencial Simple"),
+  RMSE = c(error_hw[3], error_ses[3]),  # Error cuadrático medio
+  MAE = c(error_hw[2], error_ses[2])    # Error absoluto medio
+)
+
+# Gráfico de barras comparativo
+ggplot(errores, aes(x = Modelo, y = RMSE, fill = Modelo)) +
+  geom_bar(stat = "identity") +
+  ggtitle("Comparación de RMSE entre Modelos") +
+  ylab("RMSE") +
+  theme_minimal()
+```
+
+* Holt-Winters tiene un desempeño mucho mejor en términos de error.
+* SES muestra un error muy alto, lo que indica que no captura bien la estructura de la serie. Esto es lógico, ya que el suavizamiento exponencial simple no considera estacionalidad ni tendencia, mientras que Holt-Winters sí lo hace.
 
 # Fuentes
 * Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series

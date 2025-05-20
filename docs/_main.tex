@@ -79,7 +79,7 @@
 
 \title{Análisis Series de Tiempo: Precio del Oro}
 \author{Nicolás Méndez Gutiérrez - Christian Martinez}
-\date{2025-05-14}
+\date{2025-05-19}
 
 \begin{document}
 \maketitle
@@ -473,14 +473,14 @@ alternative hypothesis: stationary
   Al aplicar una transformación logarítmica seguida de una diferencia, se consigue una serie que oscila alrededor de cero y mantiene varianza aproximadamente constante.
 \end{itemize}
 
-\chapter{Pronóstico de Series de Tiempo}\label{pronuxf3stico-de-series-de-tiempo}
+\chapter{Pronóstico de Series de Tiempo Holt-Winters}\label{pronuxf3stico-de-series-de-tiempo-holt-winters}
 
-\section{1 Aplicar el modelo de Holt-Winters}\label{aplicar-el-modelo-de-holt-winters}
+\section{Aplicar el modelo de Holt-Winters}\label{aplicar-el-modelo-de-holt-winters}
 
 Dado que la estacionalidad parece mantenerse relativamente constante en magnitud, un modelo aditivo podría ser la mejor opción.
 \pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/17-1.pdf}}
 
-\section{2 Evaluar el ajuste del modelo}\label{evaluar-el-ajuste-del-modelo}
+\section{Evaluar el ajuste del modelo}\label{evaluar-el-ajuste-del-modelo}
 
 \begin{verbatim}
 Holt-Winters exponential smoothing with trend and additive seasonal component.
@@ -874,13 +874,13 @@ s365 -6.832495e-03
   gamma = 0.3500 → La componente estacional tiene moderada importancia, lo que confirma que el precio del oro muestra fluctuaciones repetitivas
 \end{itemize}
 
-\section{3 Pronostico con Holt-Winters}\label{pronostico-con-holt-winters}
+\section{Pronostico con Holt-Winters}\label{pronostico-con-holt-winters}
 
 \pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/19-1.pdf}}
 
 La línea roja indica el ajuste del modelo sobre la serie temporal. El modelo captura bastante bien la variabilidad
 
-\section{4 Aplicación de suavizado exponencial simple}\label{aplicaciuxf3n-de-suavizado-exponencial-simple}
+\section{Aplicación de suavizado exponencial simple}\label{aplicaciuxf3n-de-suavizado-exponencial-simple}
 
 \pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/20-1.pdf}}
 
@@ -889,7 +889,7 @@ aleatorias.
 El modelo Holt-Winters añade tendencia y estacionalidad, mientras que el suavizamiento exponencial simple solo suaviza la
 serie.
 
-\section{5 Comparación de modelos}\label{comparaciuxf3n-de-modelos}
+\section{Comparación de modelos}\label{comparaciuxf3n-de-modelos}
 
 Calcular el error del modelo Holt-Winters
 
@@ -915,7 +915,7 @@ RMSE: 353.69 en modelo SAS, el modelo no ajusta bien la variabilidad de la serie
 
 MAE: 237.07 También más alto en modelo SAS, indicando errores más grandes en la predicción.
 
-\section{6 Conclusiones}\label{conclusiones}
+\section{Conclusiones}\label{conclusiones}
 
 \pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/24-1.pdf}}
 
@@ -926,6 +926,55 @@ MAE: 237.07 También más alto en modelo SAS, indicando errores más grandes en 
 \item
   SES muestra un error muy alto, lo que indica que no captura bien la estructura de la serie. Esto es lógico, ya que el suavizamiento exponencial simple no considera estacionalidad ni tendencia, mientras que Holt-Winters sí lo hace.
 \end{itemize}
+
+\chapter{Pronóstico con modelo ARIMA}\label{pronuxf3stico-con-modelo-arima}
+
+\begin{verbatim}
+Series: serie_ts 
+ARIMA(5,2,0) 
+
+Coefficients:
+          ar1      ar2      ar3      ar4      ar5
+      -0.8659  -0.6273  -0.4565  -0.3060  -0.1475
+s.e.   0.0187   0.0242   0.0255   0.0242   0.0188
+
+sigma^2 = 145160:  log likelihood = -20640.28
+AIC=41292.57   AICc=41292.6   BIC=41328.2
+
+Training set error measures:
+                     ME     RMSE      MAE          MPE      MAPE       MASE
+Training set -0.7881241 380.5229 256.2009 -0.001422517 0.6356454 0.04017145
+                    ACF1
+Training set -0.01683052
+\end{verbatim}
+
+\begin{verbatim}
+[1] "AIC: 41292.5656990829"
+\end{verbatim}
+
+\begin{verbatim}
+[1] "BIC: 41328.1985125718"
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  El AIC ayuda a comparar modelos---cuanto más bajo, mejor el ajuste con menos complejidad.
+\item
+  BIC (Bayesian Information Criterion): Similar a AIC, pero penaliza más la complejidad del modelo. Un BIC menor indica que el modelo es más parsimonioso (no sobreajustado).
+\item
+  RMSE (Root Mean Squared Error): Mide cuánto se desvían las predicciones de los valores reales. Menor RMSE indica mejor precisión en el ajuste. Para referencia, si el precio del oro oscila en miles, un RMSE de 380 puede ser relativamente aceptable.
+\item
+  MAE (Mean Absolute Error): Indica el promedio de error absoluto en la predicción
+\item
+  MAPE (Mean Absolute Percentage Error): Evalúa qué tan bien el modelo predice en términos porcentuales. El modelo tiene buena precisión, con MAPE bajo y errores moderados (RMSE y MAE).
+\item
+  AIC y BIC sugieren que el modelo es competitivo
+\end{itemize}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/27-1.pdf}}
+
+El modelo predice la evolución del precio del oro basándose en patrones pasados.Dado que ARIMA(5,2,0) usa diferenciación de segundo orden, la predicción busca capturar cambios en la tasa de crecimiento en lugar de los valores absolutos.
 
 \chapter{Fuentes}\label{fuentes}
 

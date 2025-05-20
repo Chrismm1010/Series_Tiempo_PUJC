@@ -11,11 +11,12 @@ estacionalidad
 diferenciación-de-primer-orden
 transformación-logarítmica-diferencia
 visualización-comparativa
-pronóstico-de-series-de-tiempo
+pronóstico-de-series-de-tiempo-holt-winters
 aplicar-el-modelo-de-holt-winters
 evaluar-el-ajuste-del-modelo
 pronostico-con-holt-winters
 aplicación-de-suavizado-exponencial-simple
 comparación-de-modelos
 conclusiones
+pronóstico-con-modelo-arima
 fuentes

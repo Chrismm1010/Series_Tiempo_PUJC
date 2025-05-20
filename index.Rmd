@@ -280,9 +280,9 @@ par(mfrow = c(1, 1))
 * La diferenciación de primer orden elimina la tendencia, estabilizando la media pero no completamente la varianza.
 * Al aplicar una transformación logarítmica seguida de una diferencia, se consigue una serie que oscila alrededor de cero y mantiene varianza aproximadamente constante.
 
-# Pronóstico de Series de Tiempo
+# Pronóstico de Series de Tiempo Holt-Winters
 
-## 1 Aplicar el modelo de Holt-Winters
+## Aplicar el modelo de Holt-Winters
 Dado que la estacionalidad parece mantenerse relativamente constante en magnitud, un modelo aditivo podría ser la mejor opción.
 ```{r 17}
 # Ajustar el modelo Holt-Winters
@@ -290,7 +290,7 @@ modelo_hw <- HoltWinters(ts_log_diff, seasonal = "additive")
 plot(modelo_hw, main = "Modelo Holt-Winters aplicado a la Serie Transformada")
 ```
 
-## 2 Evaluar el ajuste del modelo
+## Evaluar el ajuste del modelo
 
 ```{r 18}
 # Visualizar los parámetros estimados
@@ -301,7 +301,7 @@ print(modelo_hw)
 * beta = 0.0023:  La tendencia es muy baja, lo que indica que el modelo no detecta un crecimiento claro después de la diferenciación.
 * gamma = 0.3500 → La componente estacional tiene moderada importancia, lo que confirma que el precio del oro muestra fluctuaciones repetitivas
 
-## 3 Pronostico con Holt-Winters
+## Pronostico con Holt-Winters
 
 ```{r 19}
 # Predicción para los próximos 30 días
@@ -312,7 +312,7 @@ lines(pred_hw[,1], col = "red", lwd = 2)
 
 La línea roja indica el ajuste del modelo sobre la serie temporal. El modelo captura bastante bien la variabilidad
 
-## 4 Aplicación de suavizado exponencial simple
+## Aplicación de suavizado exponencial simple
 
 ```{r 20}
 modelo_ses <- ses(serie_ts)
@@ -324,7 +324,7 @@ aleatorias.
 El modelo Holt-Winters añade tendencia y estacionalidad, mientras que el suavizamiento exponencial simple solo suaviza la
 serie.
 
-## 5 Comparación de modelos
+## Comparación de modelos
 
 Calcular el error del modelo Holt-Winters
 ```{r 21}
@@ -356,7 +356,7 @@ RMSE: 353.69 en modelo SAS, el modelo no ajusta bien la variabilidad de la serie
 
 MAE: 237.07 También más alto en modelo SAS, indicando errores más grandes en la predicción.
 
-## 6 Conclusiones
+## Conclusiones
 
 ```{r 24}
 # Crear un data frame con las métricas de error
@@ -376,6 +376,42 @@ ggplot(errores, aes(x = Modelo, y = RMSE, fill = Modelo)) +
 
 * Holt-Winters tiene un desempeño mucho mejor en términos de error.
 * SES muestra un error muy alto, lo que indica que no captura bien la estructura de la serie. Esto es lógico, ya que el suavizamiento exponencial simple no considera estacionalidad ni tendencia, mientras que Holt-Winters sí lo hace.
+
+# Pronóstico con modelo ARIMA
+
+```{r 25}
+# Ajustar modelo ARIMA automáticamente
+modelo_arima <- auto.arima(serie_ts)
+
+# Evaluar el modelo
+summary(modelo_arima)
+```
+
+```{r 26}
+# Ver métricas AIC y BIC
+aic_value <- AIC(modelo_arima)
+bic_value <- BIC(modelo_arima)
+
+print(paste("AIC:", aic_value))
+print(paste("BIC:", bic_value))
+```
+
+* El AIC ayuda a comparar modelos—cuanto más bajo, mejor el ajuste con menos complejidad.
+* BIC (Bayesian Information Criterion): Similar a AIC, pero penaliza más la complejidad del modelo. Un BIC menor indica que el modelo es más parsimonioso (no sobreajustado). 
+* RMSE (Root Mean Squared Error): Mide cuánto se desvían las predicciones de los valores reales. Menor RMSE indica mejor precisión en el ajuste. Para referencia, si el precio del oro oscila en miles, un RMSE de 380 puede ser relativamente aceptable.
+* MAE (Mean Absolute Error): Indica el promedio de error absoluto en la predicción
+* MAPE (Mean Absolute Percentage Error): Evalúa qué tan bien el modelo predice en términos porcentuales. El modelo tiene buena precisión, con MAPE bajo y errores moderados (RMSE y MAE).
+* AIC y BIC sugieren que el modelo es competitivo
+
+```{r 27}
+# Predicción a 30 días
+predicciones <- forecast(modelo_arima, h = 30)
+
+# Visualizar la predicción
+plot(predicciones, main = "Pronóstico ARIMA del Precio del Oro")
+```
+
+El modelo predice la evolución del precio del oro basándose en patrones pasados.Dado que ARIMA(5,2,0) usa diferenciación de segundo orden, la predicción busca capturar cambios en la tasa de crecimiento en lugar de los valores absolutos.
 
 # Fuentes
 * Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series

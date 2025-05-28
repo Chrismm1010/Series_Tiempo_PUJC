@@ -19,4 +19,5 @@ aplicación-de-suavizado-exponencial-simple
 comparación-de-modelos
 conclusiones
 pronóstico-con-modelo-arima
+algorítmo-de-facebooks-prophet
 fuentes

@@ -79,7 +79,7 @@
 
 \title{Análisis Series de Tiempo: Precio del Oro}
 \author{Nicolás Méndez Gutiérrez - Christian Martinez}
-\date{2025-05-19}
+\date{2025-05-28}
 
 \begin{document}
 \maketitle
@@ -975,6 +975,56 @@ Training set -0.01683052
 \pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/27-1.pdf}}
 
 El modelo predice la evolución del precio del oro basándose en patrones pasados.Dado que ARIMA(5,2,0) usa diferenciación de segundo orden, la predicción busca capturar cambios en la tasa de crecimiento en lugar de los valores absolutos.
+
+\chapter{Algorítmo de Facebook's Prophet}\label{algoruxedtmo-de-facebooks-prophet}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/28-1.pdf}}
+
+Recordemos que la serie del precio del oro:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Tiene una tendencia clara, con un crecimiento acelerado en ciertos periodos.
+\item
+  Muestra estacionalidadad, por lo que hay patrones repetitivos a lo largo del tiempo
+\item
+  Al diferenciarla y aplicar transformación logarítmica, la serie se volvio estacionaria
+\end{enumerate}
+
+Una regresión clásica funciona bien cuando hay una relación lineal y estable entre las variables, sin embargo, en casos como estos donde las series temporales tienen
+tendencia y estacionalidad, la regresión simple no captura bien los patrones de la serie.
+
+Esta gráfica representa una serie temporal con datos dispersos y una curva de ajuste dada por el algoritmo de Facebook's Prophet (lina azul).
+
+Vemos que la tendencia se mantiene en valores cercanos a cero, lo que significa que después de la transformación logaritmica y diferenciación, los movimientos del precio
+del oro son más estacionariarios y predecibles.
+
+En conclusión, usar el método Facebook's prophet es adecuado ya que la serie tiene patrones ciclicos y con este algoritmo se captura mejor la evolución de la serie.
+
+\begin{verbatim}
+
+Call:
+lm(formula = y ~ ds, data = df_prophet)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.061581 -0.004095  0.000049  0.004113  0.051570 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)  
+(Intercept) -3.785e-03  2.465e-03  -1.535   0.1248  
+ds           2.287e-07  1.364e-07   1.677   0.0936 .
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.00829 on 2803 degrees of freedom
+Multiple R-squared:  0.001003,  Adjusted R-squared:  0.0006462 
+F-statistic: 2.813 on 1 and 2803 DF,  p-value: 0.09361
+\end{verbatim}
+
+Vemos que el p-valor no es menor que 0.05 para una regresión lineal simple por lo que no es altamente significativa y no capta bien la estructura de la serie.
 
 \chapter{Fuentes}\label{fuentes}
 

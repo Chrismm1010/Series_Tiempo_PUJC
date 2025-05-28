@@ -413,5 +413,52 @@ plot(predicciones, main = "Pronóstico ARIMA del Precio del Oro")
 
 El modelo predice la evolución del precio del oro basándose en patrones pasados.Dado que ARIMA(5,2,0) usa diferenciación de segundo orden, la predicción busca capturar cambios en la tasa de crecimiento en lugar de los valores absolutos.
 
+# Algorítmo de Facebook's Prophet
+
+```{r 28}
+library(prophet)
+
+# Crear dataframe adecuado para Prophet
+df_prophet <- data.frame(ds = datos$Date[-1], y = ts_log_diff)
+
+# Ajustar el modelo
+m <- prophet(df_prophet)
+
+# Generar predicciones futuras
+future <- make_future_dataframe(m, periods = 365)
+forecast <- predict(m, future)
+
+# Restaurar escala original
+forecast$yhat_orig <- exp(forecast$yhat)
+
+# Visualizar
+plot(forecast$ds, forecast$yhat_orig, type = "l", col = "blue",
+     main = "Predicción del Precio del Oro con Prophet",
+     ylab = "Precio del Oro", xlab = "Fecha")
+```
+
+Recordemos que la serie del precio del oro:
+
+1. Tiene una tendencia clara, con un crecimiento acelerado en ciertos periodos. 
+2. Muestra estacionalidadad, por lo que hay patrones repetitivos a lo largo del tiempo
+3. Al diferenciarla y aplicar transformación logarítmica, la serie se volvio estacionaria
+
+Una regresión clásica funciona bien cuando hay una relación lineal y estable entre las variables, sin embargo, en casos como estos donde las series temporales tienen
+tendencia y estacionalidad, la regresión simple no captura bien los patrones de la serie. 
+
+Esta gráfica representa una serie temporal con datos dispersos y una curva de ajuste dada por el algoritmo de Facebook's Prophet (lina azul).
+
+Vemos que la tendencia se mantiene en valores cercanos a cero, lo que significa que después de la transformación logaritmica y diferenciación, los movimientos del precio
+del oro son más estacionariarios y predecibles.
+
+En conclusión, usar el método Facebook's prophet es adecuado ya que la serie tiene patrones ciclicos y con este algoritmo se captura mejor la evolución de la serie.
+
+```{r 29}
+modelo_reg <- lm(y ~ ds, data = df_prophet)
+summary(modelo_reg)
+```
+
+Vemos que el p-valor no es menor que 0.05 para una regresión lineal simple por lo que no es altamente significativa y no capta bien la estructura de la serie. 
+
 # Fuentes
 * Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series

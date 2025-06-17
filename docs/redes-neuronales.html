@@ -4,13 +4,13 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Chapter 6 Pronóstico con modelo ARIMA | Análisis Series de Tiempo: Precio del Oro</title>
+  <title>Chapter 8 Redes Neuronales | Análisis Series de Tiempo: Precio del Oro</title>
   <meta name="description" content="<p>This is a minimal example of using the bookdown package to write a book.
 set in the _output.yml file.
 The HTML output format for this example is bookdown::gitbook,</p>" />
   <meta name="generator" content="bookdown 0.42 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Chapter 6 Pronóstico con modelo ARIMA | Análisis Series de Tiempo: Precio del Oro" />
+  <meta property="og:title" content="Chapter 8 Redes Neuronales | Análisis Series de Tiempo: Precio del Oro" />
   <meta property="og:type" content="book" />
   
   <meta property="og:description" content="<p>This is a minimal example of using the bookdown package to write a book.
@@ -19,7 +19,7 @@ The HTML output format for this example is bookdown::gitbook,</p>" />
   <meta name="github-repo" content="rstudio/bookdown-demo" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Chapter 6 Pronóstico con modelo ARIMA | Análisis Series de Tiempo: Precio del Oro" />
+  <meta name="twitter:title" content="Chapter 8 Redes Neuronales | Análisis Series de Tiempo: Precio del Oro" />
   
   <meta name="twitter:description" content="<p>This is a minimal example of using the bookdown package to write a book.
 set in the _output.yml file.
@@ -36,8 +36,8 @@ The HTML output format for this example is bookdown::gitbook,</p>" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="pronóstico-de-series-de-tiempo-holt-winters.html"/>
-<link rel="next" href="algorítmo-de-facebooks-prophet.html"/>
+<link rel="prev" href="algorítmo-de-facebooks-prophet.html"/>
+<link rel="next" href="fuentes.html"/>
 <script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -133,44 +133,30 @@ The HTML output format for this example is bookdown::gitbook,</p>" />
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="pronóstico-con-modelo-arima" class="section level1 hasAnchor" number="6">
-<h1><span class="header-section-number">Chapter 6</span> Pronóstico con modelo ARIMA<a href="#pron%C3%B3stico-con-modelo-arima" class="anchor-section" aria-label="Anchor link to header"></a></h1>
-<pre><code>Series: serie_ts 
-ARIMA(5,2,0) 
-
-Coefficients:
-          ar1      ar2      ar3      ar4      ar5
-      -0.8659  -0.6273  -0.4565  -0.3060  -0.1475
-s.e.   0.0187   0.0242   0.0255   0.0242   0.0188
-
-sigma^2 = 145160:  log likelihood = -20640.28
-AIC=41292.57   AICc=41292.6   BIC=41328.2
-
-Training set error measures:
-                     ME     RMSE      MAE          MPE      MAPE       MASE
-Training set -0.7881241 380.5229 256.2009 -0.001422517 0.6356454 0.04017145
-                    ACF1
-Training set -0.01683052</code></pre>
-<pre><code>[1] &quot;AIC: 41292.5656990829&quot;</code></pre>
-<pre><code>[1] &quot;BIC: 41328.1985125718&quot;</code></pre>
+<div id="redes-neuronales" class="section level1 hasAnchor" number="8">
+<h1><span class="header-section-number">Chapter 8</span> Redes Neuronales<a href="redes-neuronales.html#redes-neuronales" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p><img src="_main_files/figure-html/32-1.png" width="672" /></p>
+<pre><code>  Modelo         MAE        RMSE
+1  ELMAN 0.005490801 0.007620683
+2 JORDAN 0.005701307 0.007939065</code></pre>
 <ul>
-<li>El AIC ayuda a comparar modelos—cuanto más bajo, mejor el ajuste con menos complejidad.</li>
-<li>BIC (Bayesian Information Criterion): Similar a AIC, pero penaliza más la complejidad del modelo. Un BIC menor indica que el modelo es más parsimonioso (no sobreajustado).</li>
-<li>RMSE (Root Mean Squared Error): Mide cuánto se desvían las predicciones de los valores reales. Menor RMSE indica mejor precisión en el ajuste. Para referencia, si el precio del oro oscila en miles, un RMSE de 380 puede ser relativamente aceptable.</li>
-<li>MAE (Mean Absolute Error): Indica el promedio de error absoluto en la predicción</li>
-<li>MAPE (Mean Absolute Percentage Error): Evalúa qué tan bien el modelo predice en términos porcentuales. El modelo tiene buena precisión, con MAPE bajo y errores moderados (RMSE y MAE).</li>
-<li>AIC y BIC sugieren que el modelo es competitivo</li>
+<li>MAE (Mean Absolute Error): Mide el error promedio absoluto entre las predicciones y los valores reales. ELMAN tiene un MAE ligeramente menor, lo que implica que,
+en promedio, sus predicciones están un poco más cerca de los valores reales.</li>
+<li>RMSE (Root Mean Square Error): Penaliza más los errores grandes. Aquí también ELMAN muestra mejor desempeño con un valor más bajo, lo que sugiere menor
+variabilidad en los errores.</li>
 </ul>
-<p><img src="_main_files/figure-html/27-1.png" width="672" /></p>
-<p>El modelo predice la evolución del precio del oro basándose en patrones pasados.Dado que ARIMA(5,2,0) usa diferenciación de segundo orden, la predicción busca capturar cambios en la tasa de crecimiento en lugar de los valores absolutos.</p>
+<p>Aunque las diferencias son pequeñas, el modelo ELMAN muestra una mejor capacidad de generalización sobre los datos de entrenamiento. Esto sugiere que su arquitectura,
+con estados de contexto conectados a las entradas, logra capturar secuencias temporales con mayor precisión que JORDAN, cuyo contexto se retroalimenta desde la salida.</p>
+<p>El nivel de error es muy bajo, lo cual habla bien del preprocesamiento y la naturaleza del problema. La serie logarítmica diferenciada se comporta de manera
+predecible para este tipo de modelos.</p>
 </div>
             </section>
 
           </div>
         </div>
       </div>
-<a href="pronóstico-de-series-de-tiempo-holt-winters.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-<a href="algorítmo-de-facebooks-prophet.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="algorítmo-de-facebooks-prophet.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="fuentes.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

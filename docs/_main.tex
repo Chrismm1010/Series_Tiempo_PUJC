@@ -79,7 +79,7 @@
 
 \title{Análisis Series de Tiempo: Precio del Oro}
 \author{Nicolás Méndez Gutiérrez - Christian Martinez}
-\date{2025-05-28}
+\date{2025-06-16}
 
 \begin{document}
 \maketitle
@@ -1025,6 +1025,32 @@ F-statistic: 2.813 on 1 and 2803 DF,  p-value: 0.09361
 \end{verbatim}
 
 Vemos que el p-valor no es menor que 0.05 para una regresión lineal simple por lo que no es altamente significativa y no capta bien la estructura de la serie.
+
+\chapter{Redes Neuronales}\label{redes-neuronales}
+
+\pandocbounded{\includegraphics[keepaspectratio]{_main_files/figure-latex/32-1.pdf}}
+
+\begin{verbatim}
+  Modelo         MAE        RMSE
+1  ELMAN 0.005490801 0.007620683
+2 JORDAN 0.005701307 0.007939065
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  MAE (Mean Absolute Error): Mide el error promedio absoluto entre las predicciones y los valores reales. ELMAN tiene un MAE ligeramente menor, lo que implica que,
+  en promedio, sus predicciones están un poco más cerca de los valores reales.
+\item
+  RMSE (Root Mean Square Error): Penaliza más los errores grandes. Aquí también ELMAN muestra mejor desempeño con un valor más bajo, lo que sugiere menor
+  variabilidad en los errores.
+\end{itemize}
+
+Aunque las diferencias son pequeñas, el modelo ELMAN muestra una mejor capacidad de generalización sobre los datos de entrenamiento. Esto sugiere que su arquitectura,
+con estados de contexto conectados a las entradas, logra capturar secuencias temporales con mayor precisión que JORDAN, cuyo contexto se retroalimenta desde la salida.
+
+El nivel de error es muy bajo, lo cual habla bien del preprocesamiento y la naturaleza del problema. La serie logarítmica diferenciada se comporta de manera
+predecible para este tipo de modelos.
 
 \chapter{Fuentes}\label{fuentes}
 

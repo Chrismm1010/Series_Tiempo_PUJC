@@ -20,4 +20,5 @@ comparación-de-modelos
 conclusiones
 pronóstico-con-modelo-arima
 algorítmo-de-facebooks-prophet
+redes-neuronales
 fuentes

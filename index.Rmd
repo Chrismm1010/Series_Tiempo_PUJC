@@ -81,6 +81,7 @@ library(forecast)
 library(tseries)
 library(TTR)
 library(zoo)
+library(RSNNS)
 datos <- read_csv("Gold Price.csv")
 head(datos)
 ```
@@ -459,6 +460,80 @@ summary(modelo_reg)
 ```
 
 Vemos que el p-valor no es menor que 0.05 para una regresión lineal simple por lo que no es altamente significativa y no capta bien la estructura de la serie. 
+
+# Redes Neuronales
+
+```{r 30}
+# Convertir a vector y escalar
+serie <- ts_log_diff
+serie_scaled <- scale(serie)
+
+# Función para crear ventanas deslizantes
+create_lagged <- function(series, lag = 10) {
+  inputs <- embed(series, lag + 1)[, -1]
+  targets <- embed(series, lag + 1)[, 1]
+  list(x = inputs, y = targets)
+}
+
+# Crear conjunto de entrenamiento
+lag <- 10
+datos_nn <- create_lagged(as.numeric(serie_scaled), lag = lag)
+```
+
+```{r 31}
+set.seed(123)
+modelo_elman <- elman(datos_nn$x, datos_nn$y,
+                      size = c(10),        # 10 neuronas en capa oculta
+                      learnFuncParams = c(0.1),  # tasa de aprendizaje
+                      maxit = 500,
+                      linOut = TRUE)       # salida lineal
+
+set.seed(123)
+modelo_jordan <- jordan(datos_nn$x, datos_nn$y,
+                        size = c(10),
+                        learnFuncParams = c(0.1),
+                        maxit = 500,
+                        linOut = TRUE)
+
+# Predicciones
+pred_elman <- predict(modelo_elman, datos_nn$x)
+pred_jordan <- predict(modelo_jordan, datos_nn$x)
+
+# Invertir la escala
+pred_elman <- pred_elman * attr(serie_scaled, "scaled:scale") + attr(serie_scaled, "scaled:center")
+pred_jordan <- pred_jordan * attr(serie_scaled, "scaled:scale") + attr(serie_scaled, "scaled:center")
+real <- ts_log_diff[(lag + 1):length(ts_log_diff)]
+```
+
+```{r 32}
+plot(real, type = "l", col = "black", lwd = 2, main = "Pronóstico con Redes ELMAN y JORDAN", ylab = "Δ log(Precio)")
+lines(pred_elman, col = "blue", lty = 2)
+lines(pred_jordan, col = "red", lty = 3)
+legend("topright", legend = c("Real", "ELMAN", "JORDAN"),
+       col = c("black", "blue", "red"), lty = c(1, 2, 3))
+```
+
+```{r 33}
+# Métricas de error
+library(Metrics)
+data.frame(
+  Modelo = c("ELMAN", "JORDAN"),
+  MAE = c(mae(real, pred_elman), mae(real, pred_jordan)),
+  RMSE = c(rmse(real, pred_elman), rmse(real, pred_jordan))
+)
+```
+
+- MAE (Mean Absolute Error): Mide el error promedio absoluto entre las predicciones y los valores reales. ELMAN tiene un MAE ligeramente menor, lo que implica que,
+en promedio, sus predicciones están un poco más cerca de los valores reales.
+- RMSE (Root Mean Square Error): Penaliza más los errores grandes. Aquí también ELMAN muestra mejor desempeño con un valor más bajo, lo que sugiere menor
+variabilidad en los errores.
+
+
+Aunque las diferencias son pequeñas, el modelo ELMAN muestra una mejor capacidad de generalización sobre los datos de entrenamiento. Esto sugiere que su arquitectura,
+con estados de contexto conectados a las entradas, logra capturar secuencias temporales con mayor precisión que JORDAN, cuyo contexto se retroalimenta desde la salida.
+
+El nivel de error es muy bajo, lo cual habla bien del preprocesamiento y la naturaleza del problema. La serie logarítmica diferenciada se comporta de manera
+predecible para este tipo de modelos.
 
 # Fuentes
 * Dataset: https://www.kaggle.com/datasets/nisargchodavadiya/daily-gold-price-20152021-time-series
